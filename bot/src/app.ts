@@ -2,14 +2,29 @@
 import * as dotenv from 'dotenv';
 dotenv.config({ path: `${__dirname}/../.env` });
 
-// Dependencias
 import { bot } from './helpers/bot';
 import { logger } from './middlewares/logger';
+import { startUser } from './helpers/startUser';
+import * as mongoose from 'mongoose';
 
-// Logger
-bot.use(logger);
 
-// Start bot
-bot.startPolling();
+const init = async () => {
+    // Inicializar mongoose
+    mongoose.connect(process.env.MONGO_URL, {
+        dbName: process.env.MONGO_DB,
+        useNewUrlParser: true,
+    });
 
-console.log('Bot iniciado');
+    // Logger
+    bot.use(logger);
+    
+    // Start command
+    bot.start(startUser);
+    
+    // Start bot
+    bot.startPolling();
+    
+    console.log('Bot iniciado');
+}
+
+init();
