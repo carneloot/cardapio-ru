@@ -1,12 +1,16 @@
-import * as Tesseract from "tesseract.js";
-const { TesseractWorker } = Tesseract;
-import * as path from 'path';
+import { PathLike } from "fs";
+import { exec } from 'child_process';
 
-const worker = new TesseractWorker({
-    langPath: path.join(__dirname, '..', '..', '..', 'assets', 'lang-data')
-});
+export function recognize(filename: PathLike): Promise<string> {
+    const options = ["-l por", "-psm 4"];
+    const binary = "tesseract";
 
-export function recognize(filename: string): Promise<{ text: string }> {
-    return worker.recognize(filename, 'por')
-        .progress(p => console.log('progress ', p));
+    const command = [binary, filename, "stdout", ...options].join(" ");
+
+    return new Promise((resolve, reject) => {
+        exec(command, (error, stdout, stderr) => {
+            if (error) reject(error);
+            resolve(stdout);
+        });
+    });
 }

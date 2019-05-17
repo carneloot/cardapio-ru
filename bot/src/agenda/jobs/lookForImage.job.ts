@@ -4,6 +4,7 @@ import axios from 'axios';
 import * as fs from 'fs';
 
 import { Stream } from 'stream';
+
 import { recognize } from '../../providers/ocr/ocr.service';
 
 export async function lookForImage(job: Agenda.Job, done: (err?: Error) => void): Promise<void> {
@@ -29,8 +30,15 @@ function downloadImage(filePath: string): Promise<string> {
 }
 
 export function getImageFromRu() {
-    // downloadImage('./cardapio.png')
-    Promise.resolve('./cardapio.png')
+    downloadImage('./cardapio.png')
+    // Promise.resolve('./cardapio.png')
         .then(recognize)
-        .then(result => console.log(result.text))
+        .then(result => {
+            const dias = result.split('\n\n').map(dia => dia.split('\n'));
+            dias.pop();
+            
+            for (const dia of dias) {
+                console.log(dia);
+            }
+        });
 }

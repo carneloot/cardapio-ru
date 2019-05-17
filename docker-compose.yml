@@ -3,6 +3,7 @@ version: '3'
 services:
   app:
     build: ./bot
+    command: npm run start
     volumes:
       - ./bot:/usr/src/app
     networks:
