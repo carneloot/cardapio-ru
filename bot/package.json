@@ -13,14 +13,18 @@
   "license": "ISC",
   "dependencies": {
     "agenda": "^2.0.2",
+    "axios": "^0.18.0",
+    "cheerio": "^1.0.0-rc.3",
     "dotenv": "^6.1.0",
     "mongoose": "^5.5.8",
     "reflect-metadata": "^0.1.13",
     "telegraf": "^3.29.0",
+    "tesseract.js": "^2.0.0-alpha.4",
     "typegoose": "^5.6.0"
   },
   "devDependencies": {
     "@types/agenda": "^2.0.4",
+    "@types/cheerio": "^0.22.11",
     "@types/dotenv": "^4.0.3",
     "@types/mongoose": "^5.5.1",
     "@types/node": "^10.12.0",

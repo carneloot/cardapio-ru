@@ -1,5 +1,6 @@
 import * as Agenda from 'agenda';
 import * as mongoose from 'mongoose';
+import { lookForImage } from './jobs/lookForImage.job';
 
 export enum AgendaJobs {
     LOOK_FOR_IMAGE = 'look for image'
@@ -26,9 +27,4 @@ export async function initAgenda(): Promise<Agenda> {
     });
 
     return agenda;
-}
-
-const lookForImage = async (job: Agenda.Job, done: (err?: Error) => void): Promise<void> => {
-    console.log('Procurando imagem nova');
-    setTimeout(done, 5000);
 }

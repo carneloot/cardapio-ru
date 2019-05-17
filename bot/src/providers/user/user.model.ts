@@ -19,6 +19,6 @@ export class User extends Typegoose {
     @prop()
     languageCode: string;
 
-    @prop({ required: false,  })
-    daysToSend?: boolean[];
+    @prop()
+    chatId: number;
 }

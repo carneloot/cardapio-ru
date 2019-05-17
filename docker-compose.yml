@@ -5,7 +5,6 @@ services:
     build: ./bot
     volumes:
       - ./bot:/usr/src/app
-      - /usr/src/bot/node_modules
     networks:
       - cardapio-bot
     depends_on:

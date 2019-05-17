@@ -5,6 +5,7 @@ const userService = new UserService();
 
 export async function startUser(ctx: ContextMessageUpdate, next: () => any) {
     const telegramUser = ctx.update.message.from;
+    const chatId = ctx.update.message.chat.id;
 
     // Checar se ja está no banco
     const userInDb = await userService.findByTelegramId(telegramUser.id)
@@ -15,6 +16,7 @@ export async function startUser(ctx: ContextMessageUpdate, next: () => any) {
             telegramId: telegramUser.id,
             languageCode: telegramUser.language_code,
             username: telegramUser.username,
+            chatId,
         });
         
         ctx.replyWithMarkdown(`

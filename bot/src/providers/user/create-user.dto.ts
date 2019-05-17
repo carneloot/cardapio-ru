@@ -9,5 +9,7 @@ export interface CreateUserDto {
 
     languageCode: string;
 
+    chatId: number;
+
     startDate?: Date;
 }
