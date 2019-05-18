@@ -2,6 +2,7 @@ import { Model } from "mongoose";
 import { Cardapio } from "./cardapio.model";
 import { InstanceType } from "typegoose";
 import { CreateCardapioDto } from "./create-cardapio.dto";
+import { throws } from "assert";
 
 export class CardapioService {
     private cardapioModel: Model<InstanceType<Cardapio>, {}>;
@@ -32,6 +33,8 @@ export class CardapioService {
         .sort({ dataRequisicao: -1 })
         .limit(1)
         .exec()
-        .then(vetor => vetor[0]);
+        .then(vetor => (vetor.length)
+                ? vetor[0]
+                : Promise.reject(Error('Não há cardápio para essa data')))
     }
 }

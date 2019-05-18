@@ -105,3 +105,4 @@ dist
 
 *.traineddata
 !bot/assets/lang-data/*.traineddata
+*.png

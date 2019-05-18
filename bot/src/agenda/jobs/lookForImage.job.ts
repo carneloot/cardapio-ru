@@ -25,7 +25,7 @@ export async function lookForImage(job: Agenda.Job, done: (err?: Error) => void)
             if (banco && nova == banco)
                 done();
             else
-                downloadImage(nova, '/tmp/cardapio.png')
+                downloadImage(nova, '/usr/src/app/assets/cardapio.png')
                     .then(recognize)
                     .then(separateDays)
                     .then(dias => {
@@ -37,9 +37,8 @@ export async function lookForImage(job: Agenda.Job, done: (err?: Error) => void)
                             url: nova,
                             dataRequisicao,
                             textos, dataInicio, dataFim,
-                        });
+                        }).then(_ => done());
 
-                        done();
                     });
         })
         .catch(err => {
