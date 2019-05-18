@@ -1,5 +1,5 @@
 import { ContextMessageUpdate } from "telegraf";
-import { UserService } from "../providers/providers";
+import { UserService } from "../providers";
 
 const userService = new UserService();
 

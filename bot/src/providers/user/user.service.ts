@@ -1,26 +1,26 @@
 import { User } from "./user.model";
-import { CreateUserDto } from "./create-user.dto";
 import { Model } from "mongoose";
 import { InstanceType } from "typegoose";
+import { CreateUserDto } from "./create-user.dto";
 
 export class UserService {
-    private UserModel: Model<InstanceType<User>, {}>
+    private userModel: Model<InstanceType<User>, {}>
     
     constructor() {
-        this.UserModel = new User().getModelForClass(User);
+        this.userModel = new User().getModelForClass(User);
     }
 
     async create(newUserInfo: CreateUserDto): Promise<User> {
         newUserInfo.startDate = new Date();
-        return await new this.UserModel(newUserInfo).save();
+        return await new this.userModel(newUserInfo).save();
     }
 
     async findById(id: string): Promise<User> {
-        return await this.UserModel.findById(id).exec();
+        return await this.userModel.findById(id).exec();
     }
     
     async findByTelegramId(telegramId: number): Promise<User> {
-        return await this.UserModel.findOne({ telegramId }).exec();
+        return await this.userModel.findOne({ telegramId }).exec();
     }
 
 }

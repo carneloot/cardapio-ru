@@ -5,11 +5,47 @@ import * as fs from 'fs';
 
 import { Stream } from 'stream';
 
-import { recognize } from '../../providers/ocr/ocr.service';
+import { recognize, CardapioService } from '../../providers';
+
+const cardapioService = new CardapioService();
 
 export async function lookForImage(job: Agenda.Job, done: (err?: Error) => void): Promise<void> {
-    console.log('Procurando imagem nova');
-    setTimeout(done, 5000);
+    console.log('Checando novo cardapio')
+    const dataRequisicao = new Date();
+    getImageUrl()
+        .then(async url => {
+            const ultimoSalvo = await cardapioService.findLatest();
+
+            return {
+                nova: url,
+                banco: (!!ultimoSalvo) ? ultimoSalvo.url : null,
+            };
+        })
+        .then(({ nova, banco }) => {
+            if (banco && nova == banco)
+                done();
+            else
+                downloadImage(nova, '/tmp/cardapio.png')
+                    .then(recognize)
+                    .then(separateDays)
+                    .then(dias => {
+                        const dataInicio = pegarUltimaSegunda(dataRequisicao);
+                        const dataFim = pegarProximaSexta(dataRequisicao);
+                        const textos = dias.map(tratarErros);
+
+                        cardapioService.create({
+                            url: nova,
+                            dataRequisicao,
+                            textos, dataInicio, dataFim,
+                        });
+
+                        done();
+                    });
+        })
+        .catch(err => {
+            job.fail(err);
+            job.save();
+        });
 }
 
 function getImageUrl(): Promise<string> {
@@ -18,10 +54,9 @@ function getImageUrl(): Promise<string> {
         .then(imgCardapio => imgCardapio.attribs.src);
 }
 
-function downloadImage(filePath: string): Promise<string> {
+function downloadImage(imageUrl, filePath: string): Promise<string> {
     return new Promise(resolve => {
-        getImageUrl()
-            .then(imageUrl => axios.get(imageUrl, { responseType: 'stream' }))
+        axios.get(imageUrl, { responseType: 'stream' })
             .then(response => {
                 (<Stream>response.data).pipe(fs.createWriteStream(filePath))
                     .on('close', () => resolve(filePath));
@@ -29,16 +64,32 @@ function downloadImage(filePath: string): Promise<string> {
     });
 }
 
-export function getImageFromRu() {
-    downloadImage('./cardapio.png')
-    // Promise.resolve('./cardapio.png')
-        .then(recognize)
-        .then(result => {
-            const dias = result.split('\n\n').map(dia => dia.split('\n'));
-            dias.pop();
-            
-            for (const dia of dias) {
-                console.log(dia);
-            }
-        });
+function separateDays(todosDias: string): string[] {
+    const dias = todosDias.split('\n\n')
+        .map(dia => dia.replace('\n', ' '));
+    dias.pop();
+    return dias;
+}
+
+function pegarUltimaSegunda(date: Date) {
+    const day = date.getDay()
+    const diff = date.getDate() - day + (day == 0 ? -6 : 1);
+    return new Date(date.setDate(diff));
+}
+
+function pegarProximaSexta(date: Date) {
+    const day = date.getDay()
+    const diff = date.getDate() + 5 - day + (day == 6 ? 7 : 0);
+    return new Date(date.setDate(diff));
+}
+
+function tratarErros(dia: string): string {
+    const ano = new Date().getFullYear().toString();
+    return dia
+        .toUpperCase()
+        .replace('FEUÃO', 'FEIJÃO')
+        .replace('FEI RA', 'FEIRA')
+        .replace('GRELHADAI', 'GRELHADA /')
+        .replace(' I ', ' / ')
+        .replace(ano + ' ', ano + '\n');
 }

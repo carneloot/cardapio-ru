@@ -4,6 +4,7 @@ FROM node:8.15
 RUN apt-get update
 RUN apt-get install -y tesseract-ocr
 COPY assets/lang-data/por.traineddata /usr/share/tesseract-ocr/tessdata
+COPY assets/cardapio.uzn /tmp
 
 # Create working directory
 RUN mkdir - p /usr/src/app
