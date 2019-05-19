@@ -7,7 +7,7 @@ import { bot } from './helpers/bot';
 import { logger } from './middlewares/logger';
 import { startUser } from './helpers/startUser';
 import { initAgenda } from './agenda/agenda';
-import { CardapioService, EDiasSemana } from './providers';
+import { BotCommands } from './helpers/commands';
 
 const init = async () => {
     // Inicializar mongoose
@@ -27,23 +27,10 @@ const init = async () => {
     
     // Start bot
     bot.startPolling();
-    
+
+    new BotCommands();
+
     console.log('Bot iniciado');
-
-    testeCardapio();
 }
-
-const cardapioService = new CardapioService();
-
-
-function testeCardapio() {
-    const data = new Date();//'2019-05-13T23:30:24.240Z');
-    cardapioService.findDateInBetween(data)
-        .then(cardapio => cardapio.textos[data.getDay() - 1])
-        .catch(err => cardapioService.findLatest()
-            .then(cardapio => cardapio.textos[EDiasSemana.SEXTA]))
-        .then(cardapio => console.log('Cardapio: ', cardapio));
-}
-
 
 init();
