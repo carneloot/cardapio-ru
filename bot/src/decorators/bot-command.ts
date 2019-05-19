@@ -1,5 +1,8 @@
 import { bot } from "../helpers/bot";
 import { startUser } from '../helpers/startUser';
+import { DescriptionService } from '../providers';
+
+const descriptionService = new DescriptionService();
 
 interface IBotCommandParams {
     command: string,
@@ -27,5 +30,9 @@ export function BotCommand(values: string | IBotCommandParams) {
         bot.command(command, startUser, descriptor.value);
 
         // TODO: Salvar as descrições para mandar para o bot depois
+        if (description) {
+            descriptionService.addDescription({ command, description });
+        }
+
     }
 };
