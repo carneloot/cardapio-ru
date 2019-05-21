@@ -22,10 +22,11 @@ export async function lookForImage(job: Agenda.Job, done: (err?: Error) => void)
             };
         })
         .then(({ nova, banco }) => {
-            if (banco && nova == banco)
+            if (banco && nova == banco) {
                 done();
-            else
-                downloadImage(nova, '/usr/src/app/assets/cardapio.png')
+                return Promise.resolve();
+            } else
+                return downloadImage(nova, '/usr/src/app/assets/cardapio.png')
                     .then(recognize)
                     .then(separateDays)
                     .then(dias => {
@@ -37,11 +38,14 @@ export async function lookForImage(job: Agenda.Job, done: (err?: Error) => void)
                             url: nova,
                             dataRequisicao,
                             textos, dataInicio, dataFim,
-                        }).then(_ => done());
+                        })
+                        .then(_ => done())
+                        .then(() => console.log('Cardapio salvo com sucesso'));
 
                     });
         })
         .catch(err => {
+            console.error('Erro ao conseguir o cardapio');
             job.fail(err);
             job.save();
         });
