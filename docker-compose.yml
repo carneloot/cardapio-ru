@@ -4,6 +4,8 @@ services:
   app:
     build: ./bot
     command: npm run start
+    environment:
+      TZ: America/Sao_Paulo
     volumes:
       - ./bot:/usr/src/app
     networks:

@@ -17,7 +17,7 @@ const init = async () => {
     });
     
     // Iniciador da agenda
-    const agenda = await initAgenda();
+    await initAgenda();
     
     // Logger
     bot.use(logger);

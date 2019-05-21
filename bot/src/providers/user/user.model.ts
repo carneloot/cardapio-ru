@@ -1,4 +1,5 @@
 import { Typegoose, prop } from 'typegoose';
+import { Types } from 'mongoose';
 
 export class User extends Typegoose {
     @prop()
@@ -21,4 +22,7 @@ export class User extends Typegoose {
 
     @prop()
     chatId: number;
+
+    @prop()
+    jobId?: Types.ObjectId;
 }

@@ -10,7 +10,7 @@ import { recognize, CardapioService } from '../../providers';
 const cardapioService = new CardapioService();
 
 export async function lookForImage(job: Agenda.Job, done: (err?: Error) => void): Promise<void> {
-    console.log('Checando novo cardapio')
+    console.log('Checando novo cardapio');
     const dataRequisicao = new Date();
     getImageUrl()
         .then(async url => {
@@ -39,8 +39,8 @@ export async function lookForImage(job: Agenda.Job, done: (err?: Error) => void)
                             dataRequisicao,
                             textos, dataInicio, dataFim,
                         })
-                        .then(_ => done())
-                        .then(() => console.log('Cardapio salvo com sucesso'));
+                        .then(() => console.log('Cardapio salvo com sucesso'))
+                        .then(_ => done());
 
                     });
         })

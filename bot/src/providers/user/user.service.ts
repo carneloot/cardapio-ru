@@ -1,5 +1,5 @@
 import { User } from "./user.model";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { InstanceType } from "typegoose";
 import { CreateUserDto } from "./create-user.dto";
 
@@ -20,7 +20,11 @@ export class UserService {
     }
     
     async findByTelegramId(telegramId: number): Promise<User> {
-        return await this.userModel.findOne({ telegramId }).exec();
+        return this.userModel.findOne({ telegramId }).exec();
+    }
+
+    async update(user: User): Promise<User> {
+        return this.userModel.findByIdAndUpdate((<any>user)._id, user).exec();
     }
 
 }

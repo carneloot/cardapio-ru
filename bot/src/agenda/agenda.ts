@@ -1,17 +1,23 @@
 import * as Agenda from 'agenda';
 import * as mongoose from 'mongoose';
-import { lookForImage } from './jobs/lookForImage.job';
+import { lookForImage, sendDaily } from './jobs';
 
 export enum AgendaJobs {
-    LOOK_FOR_IMAGE = 'look for image'
+    LOOK_FOR_IMAGE = 'look for image',
+    SEND_DAILY     = 'send daily',
 }
 
-export async function initAgenda(): Promise<Agenda> {
-    const agenda = new Agenda()
+export function getAgenda(): Agenda {
+    return new Agenda()
         .mongo(mongoose.connection.db, process.env.AGENDA_COLLECTION);
+}
+
+export async function initAgenda(): Promise<void> {
+    const agenda = getAgenda();
 
     // Defines de tasks
-    agenda.define(AgendaJobs.LOOK_FOR_IMAGE, lookForImage)
+    agenda.define(AgendaJobs.LOOK_FOR_IMAGE, lookForImage);
+    agenda.define(AgendaJobs.SEND_DAILY, sendDaily);
 
     // Starting
     await agenda.start();
@@ -25,6 +31,4 @@ export async function initAgenda(): Promise<Agenda> {
             job.save();
         }
     });
-
-    return agenda;
 }
